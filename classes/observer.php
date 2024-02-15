@@ -47,9 +47,8 @@ class block_telegram_forum_observer {
             $bottoken = get_config('block_telegram_forum', 'token');
             $discussion = $DB->get_record($event->objecttable, ['id' => $event->objectid]);
             $post = $DB->get_record('forum_posts', ['discussion' => $discussion->id]);
-$text = $post->subject . PHP_EOL . strip_tags($post->message,"<b><strong><i><em><a><u><ins><code><pre><blockquote>");
-$text = mb_substr($text,0,4096,'UTF-8');
-            self::send_telegram_message($bottoken, $block->config->channelid, $text);
+$text = $post->subject . PHP_EOL . $post->message;
+            self::preprocess_send_telegram_message($bottoken, $block->config->channelid, $text);
             return true;
         }
     }
@@ -76,21 +75,37 @@ $text = mb_substr($text,0,4096,'UTF-8');
             $bottoken = get_config('block_telegram_forum', 'token');
             $discussion = $DB->get_record($event->objecttable, ['id' => $event->objectid]);
             $post = $DB->get_record('forum_posts', ['id' => $discussion->id]);
-$text = $post->subject . PHP_EOL . strip_tags($post->message,"<b><strong><i><em><a><u><ins><code><pre><blockquote>");
-$len=mb_strlen($text);
-$max=4096;
-for($i=0;$i<$len;$i+=$max-3){
-    $tt = mb_substr($text,$i,$max-3,'UTF-8');
-    if($len-$i>$max-3) $tt.="...";
-            self::send_telegram_message($bottoken, $block->config->channelid, $tt);
-    usleep(50000);
-}
-                      
+$text = $post->subject . PHP_EOL . $post->message;
+            self::preprocess_send_telegram_message($bottoken, $block->config->channelid, $text);
             return true;
         }
     }
 
 
+    /**
+     * Method to preprocess send the message
+     *
+     * @param string $bottoken - Token of telegram
+     * @param string $channelid - Channel Id of telegram
+     * @param string $text - Text to be sent
+     * @return bool
+     */
+    public static function preprocess_send_telegram_message($bottoken, $channelid, $text) {
+
+$text = strip_tags($text,"<b><strong><i><em><a><u><ins><code><pre><blockquote>");
+
+$len=mb_strlen($text);
+$max=100;
+for($i=0;$i<$len;$i+=$max-3){
+    $tt = mb_substr($text,$i,$max-3,'UTF-8');
+    if($len-$i>$max-3) $tt.="...";
+            self::send_telegram_message($bottoken, $channelid, $tt);
+    sleep(1);
+}
+
+    }
+
+    
     /**
      * Method to send the message
      *
@@ -123,7 +138,10 @@ $buff .= "\n";
 
 global $CFG;
 $fname = $CFG->dataroot.'/telegram.log';
-file_put_contents($fname, $buff.$text."\n", FILE_APPEND|LOCK_EX);
+file_put_contents($fname, $buff, FILE_APPEND|LOCK_EX);
+// for external sender
+$fname = $CFG->dataroot.'/telegram/spool/'.$ttime;
+file_put_contents($fname, $channelid."\n".$text, FILE_APPEND|LOCK_EX);
         
         return true;
     }
