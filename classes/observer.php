@@ -78,7 +78,7 @@ $text = mb_substr($text,0,4096,'UTF-8');
             $post = $DB->get_record('forum_posts', ['id' => $discussion->id]);
 $text = $post->subject . PHP_EOL . strip_tags($post->message,"<b><strong><i><em><a><u><ins><code><pre><blockquote>");
 $len=mb_strlen($text);
-$max=20;
+$max=4096;
 for($i=0;$i<$len;$i+=$max){
     $tt = mb_substr($text,$i,$max,'UTF-8');
             self::send_telegram_message($bottoken, $block->config->channelid, $tt);
