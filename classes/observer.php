@@ -102,7 +102,22 @@ $text = mb_substr($text,0,4096,'UTF-8');
         ];
         $curl = new curl();
         $url = $website . '/sendMessage';
-        $result = $curl->get($url, $params);
+
+$result = json_decode($curl->get($url, $params));
+
+$today = date("Y-m-d H:i:s");
+$buff = $today." ".$channelid." ".mb_strlen($text);
+if($result->ok == true) {
+    $buff .= " ".$result->result->message_id;
+} else {
+    $buff .= " ".$result->error_code." ".$result->description;
+}
+$buff .= "\n";
+
+global $CFG;
+$fname = $CFG->dataroot.'/telegram.log';
+file_put_contents($fname, $buff.$text."\n", FILE_APPEND|LOCK_EX);
+        
         return true;
     }
 
