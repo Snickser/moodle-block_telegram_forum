@@ -40,7 +40,7 @@ $string['topic'] = 'Send new topics';
 $string['message'] = 'Send new messages';
 
 $string['notconfigured'] = 'Channel not configured! Activate edit and configure the block.';
-$string['register'] = 'Register in the course Telegram channel.';
+$string['register'] = 'Register in the «{$a}» course Telegram channel.';
 $string['instructions'] = '1. Create a private channel in Telegram;  <BR>
                            2. Add {$a} as administrator of the channel; <BR>
                            3. Discover and copy the channel id; <BR>
