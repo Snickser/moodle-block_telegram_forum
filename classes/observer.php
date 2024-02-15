@@ -127,6 +127,7 @@ for($i=0;$i<$len;$i+=$max-3){
 
 $result = json_decode($curl->get($url, $params));
 
+$ttime=microtime(true);
 $today = date("Y-m-d H:i:s");
 $buff = $today." ".$channelid." ".mb_strlen($text);
 if($result->ok == true) {
