@@ -95,7 +95,7 @@ $text = $post->subject . PHP_EOL . $post->message;
 $text = strip_tags($text,"<b><strong><i><em><a><u><ins><code><pre><blockquote>");
 
 $len=mb_strlen($text);
-$max=100;
+$max=4096;
 for($i=0;$i<$len;$i+=$max-3){
     $tt = mb_substr($text,$i,$max-3,'UTF-8');
     if($len-$i>$max-3) $tt.="...";
