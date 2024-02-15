@@ -98,6 +98,7 @@ $text = mb_substr($text,0,4096,'UTF-8');
         $params = [
             'chat_id' => $channelid,
             'text' => $text,
+            'parse_mode' => 'HTML',
         ];
         $curl = new curl();
         $url = $website . '/sendMessage';
