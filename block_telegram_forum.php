@@ -42,7 +42,7 @@ class block_telegram_forum extends block_base {
             $this->content->text = get_string('notconfigured', 'block_telegram_forum');
         } else {
             $this->content->text = "<a href='{$this->config->channellink}'
-                target='_blank'>".  get_string('register', 'block_telegram_forum') . "</a>";
+                target='_blank'>".  get_string('register', 'block_telegram_forum',$this->config->channelname) ."</a>";
         }
         return $this->content;
     }
