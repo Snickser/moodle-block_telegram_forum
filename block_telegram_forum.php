@@ -29,7 +29,15 @@ class block_telegram_forum extends block_base {
     public function init() {
         $this->title = get_string('telegram_forum', 'block_telegram_forum');
     }
-
+    
+    function specialization() {
+        if (isset($this->config->titlename)) {
+            $this->title = $this->title = format_string($this->config->titlename, true, ['context' => $this->context]);
+        } else {
+            $this->title = get_string('telegram_forum', 'block_telegram_forum');
+        }
+    }
+    
     /**
      * getContent Method
      **/

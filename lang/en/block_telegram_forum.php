@@ -27,6 +27,8 @@ $string['telegram_forum'] = 'Telegram/Forum';
 $string['telegram_forum:addinstance'] = 'Add block Telegram/Forum';
 $string['telegram_forum:myaddinstance'] = 'Addd block Telegram/Forum into My Moodle page';
 
+$string['titlename'] = 'Text block title';
+
 $string['headerconfig'] = 'Telegram/Forum block configuration';
 $string['descconfig'] = 'In order to use Telegram to send new topics in courses it is necessary to configure the token and the name of the Telegram bot used by the organization.';
 $string['tokenconfig'] = 'Bot Token';
