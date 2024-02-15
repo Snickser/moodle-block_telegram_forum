@@ -81,6 +81,7 @@ $len=mb_strlen($text);
 $max=4096;
 for($i=0;$i<$len;$i+=$max){
     $tt = mb_substr($text,$i,$max,'UTF-8');
+    if($len-$i>$max) $tt.="...";
             self::send_telegram_message($bottoken, $block->config->channelid, $tt);
     usleep(50000);
 }
