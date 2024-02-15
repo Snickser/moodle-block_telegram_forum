@@ -47,7 +47,8 @@ class block_telegram_forum_observer {
             $bottoken = get_config('block_telegram_forum', 'token');
             $discussion = $DB->get_record($event->objecttable, ['id' => $event->objectid]);
             $post = $DB->get_record('forum_posts', ['discussion' => $discussion->id]);
-            $text = $post->subject . PHP_EOL . strip_tags($post->message);
+$text = $post->subject . PHP_EOL . strip_tags($post->message,"<b><strong><i><em><a><u><ins><code><pre><blockquote>");
+$text = mb_substr($text,0,4096,'UTF-8');
             self::send_telegram_message($bottoken, $block->config->channelid, $text);
             return true;
         }
@@ -75,7 +76,8 @@ class block_telegram_forum_observer {
             $bottoken = get_config('block_telegram_forum', 'token');
             $discussion = $DB->get_record($event->objecttable, ['id' => $event->objectid]);
             $post = $DB->get_record('forum_posts', ['id' => $discussion->id]);
-            $text = $post->subject . PHP_EOL . strip_tags($post->message);
+$text = $post->subject . PHP_EOL . strip_tags($post->message,"<b><strong><i><em><a><u><ins><code><pre><blockquote>");
+$text = mb_substr($text,0,4096,'UTF-8');
             self::send_telegram_message($bottoken, $block->config->channelid, $text);
             return true;
         }
