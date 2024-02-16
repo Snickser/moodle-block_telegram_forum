@@ -89,26 +89,22 @@ class block_telegram_forum_observer {
      * @return bool
      */
     public static function preprocess_send_telegram_message($channelid, $text, $parsemode='') {
-
-$bottoken = get_config('block_telegram_forum', 'token');
-
-if($parsemode=="HTML"){
-    $text = strip_tags($text,"<b><strong><i><em><a><u><ins><code><pre><blockquote><tg-spoiler><tg-emoji>");
-} else {
-    $text = strip_tags($text);
-}
-
-$len=mb_strlen($text);
-$max=4096;
-for($i=0;$i<$len;$i+=$max-3){
-    $tt = mb_substr($text,$i,$max-3,'UTF-8');
-    if($len-$i>$max-3){
-        $tt.="...";
-        sleep(1);
-    }
-    self::send_telegram_message($bottoken, $channelid, $tt, $parsemode);
-}
-
+        $bottoken = get_config('block_telegram_forum', 'token');
+        if($parsemode=="HTML"){
+            $text = strip_tags($text,"<b><strong><i><em><a><u><ins><code><pre><blockquote><tg-spoiler><tg-emoji>");
+        } else {
+            $text = strip_tags($text);
+        }
+        $len=mb_strlen($text);
+        $max=4096;
+        for($i=0;$i<$len;$i+=$max-3){
+            $tt = mb_substr($text,$i,$max-3,'UTF-8');
+            if($len-$i>$max-3){
+                $tt.="...";
+                sleep(1);
+            }
+            self::send_telegram_message($bottoken, $channelid, $tt, $parsemode);
+        }
     }
 
     
@@ -131,7 +127,7 @@ for($i=0;$i<$len;$i+=$max-3){
         ];
         $curl = new curl();
         $url = $website . '/sendMessage';
-        $result = json_decode($curl->get($url, $params));     
+        $result = json_decode($curl->get($url, $params));
         return true;
     }
 
