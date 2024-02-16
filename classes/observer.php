@@ -131,7 +131,7 @@ for($i=0;$i<$len;$i+=$max-3){
         ];
         $curl = new curl();
         $url = $website . '/sendMessage';
-        $result = json_decode($curl->get($url, $params));     
+        $result = json_decode($curl->get($url, $params));
         return true;
     }
 
