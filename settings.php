@@ -38,6 +38,6 @@ $setting = new admin_setting_configtext('block_telegram_forum/bot',
         get_string('botconfig', 'block_telegram_forum'),
         '', '', PARAM_RAW_TRIMMED, 40);
 $settings->add($setting);
-$options = array('' => '', 'HTML' => 'HTML');
-$settings->add(new admin_setting_configselect('block_telegram_forum/parsemode', get_string('parsemode',
- 'block_telegram_forum'), get_string('configparsemode', 'block_telegram_forum'), '', $options));
+//$options = array('' => '', 'HTML' => 'HTML');
+//$settings->add(new admin_setting_configselect('block_telegram_forum/parsemode', get_string('parsemode',
+// 'block_telegram_forum'), get_string('configparsemode', 'block_telegram_forum'), '', $options));
