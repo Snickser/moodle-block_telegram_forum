@@ -130,26 +130,7 @@ for($i=0;$i<$len;$i+=$max-3){
         ];
         $curl = new curl();
         $url = $website . '/sendMessage';
-
-$result = json_decode($curl->get($url, $params));
-
-$ttime=microtime(true);
-$today = date("Y-m-d H:i:s");
-$buff = $today." ".$channelid." ".mb_strlen($text);
-if($result->ok == true) {
-    $buff .= " ".$result->result->message_id;
-} else {
-    $buff .= " ".$result->error_code." ".$result->description;
-}
-$buff .= "\n";
-
-global $CFG;
-$fname = $CFG->dataroot.'/telegram.log';
-file_put_contents($fname, $buff, FILE_APPEND|LOCK_EX);
-// for external sender
-$fname = $CFG->dataroot.'/telegram/spool/'.$ttime;
-file_put_contents($fname, $channelid."\n".$text, FILE_APPEND|LOCK_EX);
-        
+        $result = json_decode($curl->get($url, $params));     
         return true;
     }
 
