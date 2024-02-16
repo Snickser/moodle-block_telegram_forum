@@ -28,7 +28,6 @@ $string['telegram_forum:addinstance'] = 'Add block Telegram/Forum';
 $string['telegram_forum:myaddinstance'] = 'Addd block Telegram/Forum into My Moodle page';
 
 $string['titlename'] = 'Text block title';
-//$string['configparsemode'] = 'Formatting options: empty or HTML/MarkdownV2/Markdown';
 $string['parsemode'] = 'Parse mode';
 
 $string['headerconfig'] = 'Telegram/Forum block configuration';
