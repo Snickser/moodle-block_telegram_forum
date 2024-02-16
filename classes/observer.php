@@ -44,11 +44,10 @@ class block_telegram_forum_observer {
             if (!isset($block->config->forum[$event->contextinstanceid])) {
                 return true;
             }
-            $bottoken = get_config('block_telegram_forum', 'token');
             $discussion = $DB->get_record($event->objecttable, ['id' => $event->objectid]);
             $post = $DB->get_record('forum_posts', ['discussion' => $discussion->id]);
-            $text = $post->subject . PHP_EOL . strip_tags($post->message);
-            self::send_telegram_message($bottoken, $block->config->channelid, $text);
+            $text = $post->subject . PHP_EOL . $post->message;
+            self::preprocess_send_telegram_message($block->config->channelid, $text, $block->config->parsemode);
             return true;
         }
     }
@@ -72,34 +71,67 @@ class block_telegram_forum_observer {
             if (!isset($block->config->forummessage[$event->contextinstanceid])) {
                     return true;
             }
-            $bottoken = get_config('block_telegram_forum', 'token');
             $discussion = $DB->get_record($event->objecttable, ['id' => $event->objectid]);
             $post = $DB->get_record('forum_posts', ['id' => $discussion->id]);
-            $text = $post->subject . PHP_EOL . strip_tags($post->message);
-            self::send_telegram_message($bottoken, $block->config->channelid, $text);
+            $text = $post->subject . PHP_EOL . $post->message;
+            self::preprocess_send_telegram_message($block->config->channelid, $text, $block->config->parsemode);
             return true;
         }
     }
 
 
     /**
+     * Method to preprocess send the message
+     *
+     * @param string $channelid - Channel Id of telegram
+     * @param string $text - Text to be sent
+     * @parsemode string $parsemode - Parse mode param
+     * @return bool
+     */
+    public static function preprocess_send_telegram_message($channelid, $text, $parsemode='') {
+
+$bottoken = get_config('block_telegram_forum', 'token');
+
+if($parsemode=="HTML"){
+    $text = strip_tags($text,"<b><strong><i><em><a><u><ins><code><pre><blockquote><tg-spoiler><tg-emoji>");
+} else {
+    $text = strip_tags($text);
+}
+
+$len=mb_strlen($text);
+$max=4096;
+for($i=0;$i<$len;$i+=$max-3){
+    $tt = mb_substr($text,$i,$max-3,'UTF-8');
+    if($len-$i>$max-3){
+        $tt.="...";
+        sleep(1);
+    }
+    self::send_telegram_message($bottoken, $channelid, $tt, $parsemode);
+}
+
+    }
+
+    
+    /**
      * Method to send the message
      *
      * @param string $bottoken - Token of telegram
      * @param string $channelid - Channel Id of telegram
      * @param string $text - Text to be sent
+     * @parsemode string $parsemode - Parse mode param
      * @return bool
      */
-    public static function send_telegram_message($bottoken, $channelid, $text) {
+    public static function send_telegram_message($bottoken, $channelid, $text, $parsemode='') {
         global $DB;
         $website = "https://api.telegram.org/bot".$bottoken;
         $params = [
             'chat_id' => $channelid,
             'text' => $text,
+            'parse_mode' => "{$parsemode}",
         ];
         $curl = new curl();
         $url = $website . '/sendMessage';
-        $result = $curl->get($url, $params);
+        $result = json_decode($curl->get($url, $params));     
         return true;
     }
 
