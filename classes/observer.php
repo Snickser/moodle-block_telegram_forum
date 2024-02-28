@@ -123,7 +123,7 @@ for($i=0;$i<$len;$i+=$max-3){
      * @parsemode string $parsemode - Parse mode param
      * @return bool
      */
-    public static function send_telegram_message($bottoken, $channelid, $text, $parsemode=''', $log=false, $logdump=false) {
+    public static function send_telegram_message($bottoken, $channelid, $text, $parsemode='', $log=false, $logdump=false) {
         global $DB;
         $website = "https://api.telegram.org/bot".$bottoken;
         $params = [
