@@ -31,6 +31,11 @@ $string['titlename'] = 'Text block title';
 $string['parsemode'] = 'Parse mode';
 $string['parse_text'] = 'Text';
 $string['parse_html'] = 'HTML format';
+$string['telegramlog'] = 'Enable logging';
+$string['configtelegramlog'] = 'Write debug info into '.$CFG->dataroot.'/telegram.log file.';
+$string['telegramlogdump'] = 'Dump message to log';
+$string['configtelegramlogdump'] = 'For debugging purposes, write the message to a log file.';
+
 
 $string['headerconfig'] = 'Telegram/Forum block configuration';
 $string['descconfig'] = 'In order to use Telegram to send new topics in courses it is necessary to configure the token and the name of the Telegram bot used by the organization.';
