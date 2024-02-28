@@ -124,7 +124,7 @@ for($i=0;$i<$len;$i+=$max-3){
      * @return bool
      */
     public static function send_telegram_message($bottoken, $channelid, $text, $parsemode='', $log=false, $logdump=false) {
-        global $DB;
+        global $DB, $CFG;
         $website = "https://api.telegram.org/bot".$bottoken;
         $params = [
             'chat_id' => $channelid,
