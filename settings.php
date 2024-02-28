@@ -38,3 +38,12 @@ $setting = new admin_setting_configtext('block_telegram_forum/bot',
         get_string('botconfig', 'block_telegram_forum'),
         '', '', PARAM_RAW_TRIMMED, 40);
 $settings->add($setting);
+
+    $settings->add(new admin_setting_configcheckbox('block_telegram_forum/telegramlog',
+        get_string('telegramlog', 'block_telegram_forum'),
+        get_string('configtelegramlog', 'block_telegram_forum'), false));
+
+    $settings->add(new admin_setting_configcheckbox('block_telegram_forum/telegramlogdump',
+        get_string('telegramlogdump', 'block_telegram_forum'),
+        get_string('configtelegramlogdump', 'block_telegram_forum'), false));
+
