@@ -36,7 +36,6 @@ $string['configtelegramlog'] = 'Write debug info into '.$CFG->dataroot.'/telegra
 $string['telegramlogdump'] = 'Dump message to log';
 $string['configtelegramlogdump'] = 'For debugging purposes, write the message to a log file.';
 
-
 $string['headerconfig'] = 'Telegram/Forum block configuration';
 $string['descconfig'] = 'In order to use Telegram to send new topics in courses it is necessary to configure the token and the name of the Telegram bot used by the organization.';
 $string['tokenconfig'] = 'Bot Token';
