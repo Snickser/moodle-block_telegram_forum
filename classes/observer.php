@@ -91,6 +91,8 @@ class block_telegram_forum_observer {
     public static function preprocess_send_telegram_message($channelid, $text, $parsemode='') {
 
 $bottoken = get_config('block_telegram_forum', 'token');
+$log = get_config('block_telegram_forum', 'telegramlog');
+$logdump = get_config('block_telegram_forum', 'telegramlogdump');
 
 if($parsemode=="HTML"){
     $text = strip_tags($text,"<b><strong><i><em><a><u><ins><code><pre><blockquote><tg-spoiler><tg-emoji>");
@@ -106,7 +108,7 @@ for($i=0;$i<$len;$i+=$max-3){
         $tt.="...";
         sleep(1);
     }
-    self::send_telegram_message($bottoken, $channelid, $tt, $parsemode);
+    self::send_telegram_message($bottoken, $channelid, $tt, $parsemode, $log, $logdump);
 }
 
     }
@@ -121,7 +123,7 @@ for($i=0;$i<$len;$i+=$max-3){
      * @parsemode string $parsemode - Parse mode param
      * @return bool
      */
-    public static function send_telegram_message($bottoken, $channelid, $text, $parsemode='') {
+    public static function send_telegram_message($bottoken, $channelid, $text, $parsemode=''', $log=false, $logdump=false) {
         global $DB;
         $website = "https://api.telegram.org/bot".$bottoken;
         $params = [
@@ -132,25 +134,27 @@ for($i=0;$i<$len;$i+=$max-3){
         $curl = new curl();
         $url = $website . '/sendMessage';
 
-$result = json_decode($curl->get($url, $params));
-
-$ttime=microtime(true);
 $today = date("Y-m-d H:i:s");
-$buff = $today." ".$channelid." ".mb_strlen($text);
-if($result->ok == true) {
-    $buff .= " ".$result->result->message_id;
-} else {
-    $buff .= " ".$result->error_code." ".$result->description;
-}
-$buff .= "\n";
 
-global $CFG;
-$fname = $CFG->dataroot.'/telegram.log';
-file_put_contents($fname, $buff, FILE_APPEND|LOCK_EX);
+$response = json_decode($curl->get($url, $params));
+
+if($log){
+    $buff = $today." ".$channelid." ".mb_strlen($text);
+    if($response->ok == true) {
+        $buff .= " ".$response->result->message_id;
+    } else {
+        $buff .= " ".$response->error_code." ".$response->description;
+    }
+    $buff .= "\n";
+    if($logdump) $buff .= $text."\n";
+    $fname = $CFG->dataroot.'/telegram.log';
+    file_put_contents($fname, $buff, FILE_APPEND|LOCK_EX);
+}
 // for external sender
-$fname = $CFG->dataroot.'/telegram/spool/'.$ttime;
-file_put_contents($fname, $channelid."\n".$text, FILE_APPEND|LOCK_EX);
-        
+//$ttime=microtime(true);
+//$fname = $CFG->dataroot.'/telegram/spool/'.$ttime;
+//file_put_contents($fname, $channelid."\n".$text, FILE_APPEND|LOCK_EX);
+       
         return true;
     }
 
