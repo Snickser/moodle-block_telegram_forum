@@ -1,5 +1,7 @@
 ![изображение](https://github.com/Snickser/moodle-block_telegram_forum/assets/88129688/1f418aa1-5151-49ae-81e7-4d78bd0bc875)
 
+![изображение](https://github.com/Snickser/moodle-block_telegram_forum/assets/88129688/cc63feca-3a34-4b9c-aa21-13cb75abb5eb)
+
 # moodle-block_telegram_forum
 
 INSTALLATION WITH GIT
