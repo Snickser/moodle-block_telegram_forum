@@ -125,18 +125,18 @@ for($i=0;$i<$len;$i+=$max-3){
      */
     public static function send_telegram_message($bottoken, $channelid, $text, $parsemode='', $log=false, $logdump=false) {
         global $DB, $CFG;
-        $website = "https://api.telegram.org/bot".$bottoken;
+        $location = "https://api.telegram.org/bot".$bottoken.'/sendMessage';
         $params = [
             'chat_id' => $channelid,
             'text' => $text,
             'parse_mode' => "{$parsemode}",
+            'link_preview_options' => '{"is_disabled":true}',
         ];
         $curl = new curl();
-        $url = $website . '/sendMessage';
 
-$today = date("Y-m-d H:i:s");
+$today = date("Y-m-d H:i:s")." BTF";
 
-$response = json_decode($curl->get($url, $params));
+$response = json_decode($curl->post($location, $params));
 
 if($log){
     $buff = $today." ".$channelid." ".mb_strlen($text);
