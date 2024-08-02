@@ -47,7 +47,7 @@ class block_telegram_forum_observer {
             $discussion = $DB->get_record($event->objecttable, ['id' => $event->objectid]);
             $post = $DB->get_record('forum_posts', ['discussion' => $discussion->id]);
             $text = $post->subject . PHP_EOL . $post->message;
-            self::preprocess_send_telegram_message($block->config->channelid, $text, $block->config->parsemode);
+            self::preprocess_send_telegram_message($block->config->channelid, $text, $block->config->parsemode, $block->config->linkpreview);
             return true;
         }
     }
@@ -74,7 +74,7 @@ class block_telegram_forum_observer {
             $discussion = $DB->get_record($event->objecttable, ['id' => $event->objectid]);
             $post = $DB->get_record('forum_posts', ['id' => $discussion->id]);
             $text = $post->subject . PHP_EOL . $post->message;
-            self::preprocess_send_telegram_message($block->config->channelid, $text, $block->config->parsemode);
+            self::preprocess_send_telegram_message($block->config->channelid, $text, $block->config->parsemode, $block->config->linkpreview);
             return true;
         }
     }
@@ -88,7 +88,7 @@ class block_telegram_forum_observer {
      * @parsemode string $parsemode - Parse mode param
      * @return bool
      */
-    public static function preprocess_send_telegram_message($channelid, $text, $parsemode='') {
+    public static function preprocess_send_telegram_message($channelid, $text, $parsemode='', $preview=false) {
 
 $bottoken = get_config('block_telegram_forum', 'token');
 $log = get_config('block_telegram_forum', 'telegramlog');
@@ -108,7 +108,7 @@ for($i=0;$i<$len;$i+=$max-3){
         $tt.="...";
         sleep(1);
     }
-    self::send_telegram_message($bottoken, $channelid, $tt, $parsemode, $log, $logdump);
+    self::send_telegram_message($bottoken, $channelid, $tt, $parsemode, $log, $logdump, $preview);
 }
 
     }
@@ -123,15 +123,20 @@ for($i=0;$i<$len;$i+=$max-3){
      * @parsemode string $parsemode - Parse mode param
      * @return bool
      */
-    public static function send_telegram_message($bottoken, $channelid, $text, $parsemode='', $log=false, $logdump=false) {
+    public static function send_telegram_message($bottoken, $channelid, $text, $parsemode='', $log=false, $logdump=false, $preview=false) {
         global $DB, $CFG;
+
         $location = "https://api.telegram.org/bot".$bottoken.'/sendMessage';
         $params = [
             'chat_id' => $channelid,
             'text' => $text,
             'parse_mode' => "{$parsemode}",
-            'link_preview_options' => '{"is_disabled":true}',
         ];
+
+if($preview){
+        $params['link_preview_options'] = '{"is_disabled":true}';
+}
+
         $curl = new curl();
 
 $today = date("Y-m-d H:i:s")." BTF";

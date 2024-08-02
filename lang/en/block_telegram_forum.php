@@ -58,3 +58,5 @@ $string['instructions'] = '1. Create a private channel in Telegram;  <BR>
 $string['instructionstitle'] = 'Instructions';
 
 $string['privacy:metadata'] = 'The Telegram/Forum block only sends messagens to yourconfigured Telegram Channel.';
+
+$string['linkpreview'] = 'Enable link preview option';
