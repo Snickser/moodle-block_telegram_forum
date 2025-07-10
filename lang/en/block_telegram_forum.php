@@ -32,7 +32,7 @@ $string['parsemode'] = 'Parse mode';
 $string['parse_text'] = 'Text';
 $string['parse_html'] = 'HTML format';
 $string['telegramlog'] = 'Enable logging';
-$string['configtelegramlog'] = 'Write debug info into '.$CFG->dataroot.'/telegram.log file.';
+$string['configtelegramlog'] = 'Write debug info into '.$CFG->dataroot.'/temp/telegram.log file.';
 $string['telegramlogdump'] = 'Dump message to log';
 $string['configtelegramlogdump'] = 'For debugging purposes, write the message to a log file.';
 
