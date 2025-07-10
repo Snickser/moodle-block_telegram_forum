@@ -91,6 +91,7 @@ class block_telegram_forum_observer {
      * @parsemode string $parsemode - Parse mode param
      * @return bool
      */
+
     public static function preprocess_send_telegram_message($channelid, $text, $parsemode = '', $preview = false) {
 
         $bottoken = get_config('block_telegram_forum', 'token');
@@ -114,7 +115,6 @@ class block_telegram_forum_observer {
             self::send_telegram_message($bottoken, $channelid, $tt, $parsemode, $log, $logdump, $preview);
         }
     }
-
 
     /**
      * Method to send the message
