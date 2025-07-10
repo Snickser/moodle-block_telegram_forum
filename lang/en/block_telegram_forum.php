@@ -31,6 +31,10 @@ $string['titlename'] = 'Text block title';
 $string['parsemode'] = 'Parse mode';
 $string['parse_text'] = 'Text';
 $string['parse_html'] = 'HTML format';
+$string['telegramlog'] = 'Enable logging';
+$string['configtelegramlog'] = 'Write debug info into '.$CFG->dataroot.'/temp/telegram.log file.';
+$string['telegramlogdump'] = 'Dump message to log';
+$string['configtelegramlogdump'] = 'For debugging purposes, write the message to a log file.';
 
 $string['headerconfig'] = 'Telegram/Forum block configuration';
 $string['descconfig'] = 'In order to use Telegram to send new topics in courses it is necessary to configure the token and the name of the Telegram bot used by the organization.';
@@ -54,3 +58,5 @@ $string['instructions'] = '1. Create a private channel in Telegram;  <BR>
 $string['instructionstitle'] = 'Instructions';
 
 $string['privacy:metadata'] = 'The Telegram/Forum block only sends messagens to yourconfigured Telegram Channel.';
+
+$string['linkpreview'] = 'Enable link preview option';

@@ -24,7 +24,6 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class block_telegram_forum_observer {
-
     /**
      * Event processor - user created
      *
@@ -34,8 +33,10 @@ class block_telegram_forum_observer {
     public static function discussion_created(\mod_forum\event\discussion_created $event) {
         global $DB, $CFG;
         $context = context_course::instance($event->courseid);
-        $instance = $DB->get_record('block_instances',
-                        array('parentcontextid' => $context->id, 'blockname' => 'telegram_forum'));
+        $instance = $DB->get_record(
+            'block_instances',
+            ['parentcontextid' => $context->id, 'blockname' => 'telegram_forum']
+        );
         if (!$instance) {
             return true;
         } else {
@@ -47,7 +48,7 @@ class block_telegram_forum_observer {
             $discussion = $DB->get_record($event->objecttable, ['id' => $event->objectid]);
             $post = $DB->get_record('forum_posts', ['discussion' => $discussion->id]);
             $text = $post->subject . PHP_EOL . $post->message;
-            self::preprocess_send_telegram_message($block->config->channelid, $text, $block->config->parsemode);
+            self::preprocess_send_telegram_message($block->config->channelid, $text, $block->config->parsemode, $block->config->linkpreview);
             return true;
         }
     }
@@ -61,8 +62,10 @@ class block_telegram_forum_observer {
     public static function post_created(\mod_forum\event\post_created $event) {
         global $DB, $CFG;
         $context = context_course::instance($event->courseid);
-        $instance = $DB->get_record('block_instances',
-                        array('parentcontextid' => $context->id, 'blockname' => 'telegram_forum'));
+        $instance = $DB->get_record(
+            'block_instances',
+            ['parentcontextid' => $context->id, 'blockname' => 'telegram_forum']
+        );
         if (!$instance) {
             return true;
         } else {
@@ -74,7 +77,7 @@ class block_telegram_forum_observer {
             $discussion = $DB->get_record($event->objecttable, ['id' => $event->objectid]);
             $post = $DB->get_record('forum_posts', ['id' => $discussion->id]);
             $text = $post->subject . PHP_EOL . $post->message;
-            self::preprocess_send_telegram_message($block->config->channelid, $text, $block->config->parsemode);
+            self::preprocess_send_telegram_message($block->config->channelid, $text, $block->config->parsemode, $block->config->linkpreview);
             return true;
         }
     }
@@ -88,26 +91,31 @@ class block_telegram_forum_observer {
      * @parsemode string $parsemode - Parse mode param
      * @return bool
      */
-    public static function preprocess_send_telegram_message($channelid, $text, $parsemode='') {
+
+    public static function preprocess_send_telegram_message($channelid, $text, $parsemode = '', $preview = false) {
+
         $bottoken = get_config('block_telegram_forum', 'token');
-        if($parsemode=="HTML"){
-            $text = strip_tags($text,"<b><strong><i><em><a><u><ins><code><pre><blockquote><tg-spoiler><tg-emoji>");
+        $log = get_config('block_telegram_forum', 'telegramlog');
+        $logdump = get_config('block_telegram_forum', 'telegramlogdump');
+
+        if ($parsemode == "HTML") {
+            $text = strip_tags($text, "<b><strong><i><em><a><u><ins><code><pre><blockquote><tg-spoiler><tg-emoji>");
         } else {
             $text = strip_tags($text);
         }
-        $len=mb_strlen($text);
-        $max=4096;
-        for($i=0;$i<$len;$i+=$max-3){
-            $tt = mb_substr($text,$i,$max-3,'UTF-8');
-            if($len-$i>$max-3){
-                $tt.="...";
+
+        $len = mb_strlen($text);
+        $max = 4096;
+        for ($i = 0; $i < $len; $i += $max - 3) {
+            $tt = mb_substr($text, $i, $max - 3, 'UTF-8');
+            if ($len - $i > $max - 3) {
+                $tt .= "...";
                 sleep(1);
             }
-            self::send_telegram_message($bottoken, $channelid, $tt, $parsemode);
+            self::send_telegram_message($bottoken, $channelid, $tt, $parsemode, $log, $logdump, $preview);
         }
     }
 
-    
     /**
      * Method to send the message
      *
@@ -117,18 +125,46 @@ class block_telegram_forum_observer {
      * @parsemode string $parsemode - Parse mode param
      * @return bool
      */
-    public static function send_telegram_message($bottoken, $channelid, $text, $parsemode='') {
-        global $DB;
-        $website = "https://api.telegram.org/bot".$bottoken;
+    public static function send_telegram_message($bottoken, $channelid, $text, $parsemode = '', $log = false, $logdump = false, $preview = false) {
+        global $DB, $CFG;
+
+        $location = "https://api.telegram.org/bot" . $bottoken . '/sendMessage';
+
         $params = [
             'chat_id' => $channelid,
             'text' => $text,
             'parse_mode' => "{$parsemode}",
         ];
+
+        if ($preview) {
+                $params['link_preview_options'] = '{"is_disabled":true}';
+        }
+
         $curl = new curl();
-        $url = $website . '/sendMessage';
-        $result = json_decode($curl->get($url, $params));
+
+        $today = date("Y-m-d H:i:s") . " BTF";
+
+        $response = json_decode($curl->post($location, $params), false);
+
+        if ($log) {
+            $buff = $today . " " . $channelid . " " . mb_strlen($text);
+            if ($response->ok == true) {
+                $buff .= " " . $response->result->message_id;
+            } else {
+                $buff .= " " . $response->error_code . " " . $response->description;
+            }
+            $buff .= "\n";
+            if ($logdump) {
+                $buff .= $text . "\n";
+            }
+            $fname = $CFG->dataroot . '/temp/telegram.log';
+            file_put_contents($fname, $buff, FILE_APPEND | LOCK_EX);
+        }
+// for external sender
+// $ttime=microtime(true);
+// $fname = $CFG->dataroot.'/telegram/spool/'.$ttime;
+// file_put_contents($fname, $channelid."\n".$text, FILE_APPEND|LOCK_EX);
+
         return true;
     }
-
 }
