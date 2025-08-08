@@ -91,7 +91,6 @@ class block_telegram_forum_observer {
      * @parsemode string $parsemode - Parse mode param
      * @return bool
      */
-
     public static function preprocess_send_telegram_message($channelid, $text, $parsemode = '', $preview = false) {
 
         $bottoken = get_config('block_telegram_forum', 'token');
@@ -99,9 +98,10 @@ class block_telegram_forum_observer {
         $logdump = get_config('block_telegram_forum', 'telegramlogdump');
 
         if ($parsemode == "HTML") {
+//    	    $text = format_text_email($text, FORMAT_HTML);
             $text = strip_tags($text, "<b><strong><i><em><a><u><ins><code><pre><blockquote><tg-spoiler><tg-emoji>");
         } else {
-            $text = strip_tags($text);
+            $text = html_to_text($text);
         }
 
         $len = mb_strlen($text);
@@ -115,6 +115,7 @@ class block_telegram_forum_observer {
             self::send_telegram_message($bottoken, $channelid, $tt, $parsemode, $log, $logdump, $preview);
         }
     }
+
 
     /**
      * Method to send the message

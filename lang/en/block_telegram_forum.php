@@ -29,8 +29,9 @@ $string['telegram_forum:myaddinstance'] = 'Addd block Telegram/Forum into My Moo
 
 $string['titlename'] = 'Text block title';
 $string['parsemode'] = 'Parse mode';
-$string['parse_text'] = 'Text';
-$string['parse_html'] = 'HTML format';
+$string['parse_text'] = 'Text plain';
+$string['parse_html'] = 'HTML';
+$string['parse_markdown'] = 'MarkdownV2';
 $string['telegramlog'] = 'Enable logging';
 $string['configtelegramlog'] = 'Write debug info into '.$CFG->dataroot.'/temp/telegram.log file.';
 $string['telegramlogdump'] = 'Dump message to log';
